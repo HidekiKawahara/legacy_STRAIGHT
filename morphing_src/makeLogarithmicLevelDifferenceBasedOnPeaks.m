@@ -1,0 +1,1 @@
+function mObject = makeLogarithmicLevelDifferenceBasedOnPeaks(mObject,levelDifferenceTable)
