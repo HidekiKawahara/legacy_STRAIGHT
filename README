@@ -3,6 +3,10 @@ Legacy STRAIGHT
 The legacy-STRAIGHT is a collection of speech analysis, modification and resynthesis tools. 
 
 Release note
+[July 17, 2018: Prerelease]
+Added documemts. The first release will be on July 24, 2018.
+
+[July 16, 2018: Prerelease]
 This release is a copy of the latest version which was distributed by the first author (Hideki Kawahara) to academic communities. The version is named STRAIGHTV40_007. The last update was July 17, 2016. Kansai TLO has also licensed the legacy-STRAIGHT for commercial use. The licensees of the legacy-STRAIGHT agreed to make the legacy-STRAIGHT open to the public after July 15, 2018. 
 
 Acknowledgment
