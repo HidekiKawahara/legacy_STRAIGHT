@@ -8,13 +8,16 @@ Set MATLAB path to "src" directory.
 
 Quick start
 
-Paste the following code to MATLAB command window. It generates copy-synthesized output to the structure variable "syntheszed_signal". Check its field.
+Paste the following code to MATLAB command window. It generates copy-synthesized output to the variable "syntheszed_signal". Check its field.
 
 [x, fs] = audioread('vaiueo2d.wav');
 f0raw = MulticueF0v14(x,fs);
 ap = exstraightAPind(x,fs,f0raw);
 n3sgram=exstraightspec(x,f0raw,fs);
 syntheszed_signal = exstraightsynth(f0raw,n3sgram,ap,fs);
+
+For running this using GNU Octave, please load signal package.
+pkg load signal
 
 Release note
 [July 17, 2018: Prerelease]
