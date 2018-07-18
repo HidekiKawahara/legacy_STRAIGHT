@@ -20,6 +20,9 @@ For running this using GNU Octave, please load signal package.
 pkg load signal
 
 Release note
+[July 19, 2018; Prerelease]
+The "Quick start" example also runs properly on GNU Octave 4.4.0 on macOS High Sierra (10.13.6)
+
 [July 17, 2018: Prerelease]
 Added documemts. The first release will be on July 24, 2018.
 
