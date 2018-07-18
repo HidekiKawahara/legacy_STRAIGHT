@@ -2,6 +2,20 @@ Legacy STRAIGHT
 
 The legacy-STRAIGHT is a collection of speech analysis, modification and resynthesis tools. 
 
+Installation
+
+Set MATLAB path to "src" directory.
+
+Quick start
+
+Paste the following code to MATLAB command window. It generates copy-synthesized output to the structure variable "syntheszed_signal". Check its field.
+
+[x, fs] = audioread('vaiueo2d.wav');
+f0raw = MulticueF0v14(x,fs);
+ap = exstraightAPind(x,fs,f0raw);
+n3sgram=exstraightspec(x,f0raw,fs);
+syntheszed_signal = exstraightsynth(f0raw,n3sgram,ap,fs);
+
 Release note
 [July 17, 2018: Prerelease]
 Added documemts. The first release will be on July 24, 2018.
@@ -13,4 +27,4 @@ Acknowledgment
 The legacy-STRAIGHT was supported by many coauthors, contributors, and funding agencies. 
 
 Hideki Kawahara,
-July 16, 2018
+July 16, 2018 (started:)
