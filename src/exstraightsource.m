@@ -227,7 +227,7 @@ end
 function prm=zinitializeParameters
 prm.F0searchLowerBound=40; % f0floor
 prm.F0searchUpperBound=800; % f0ceil
-prm.F0defaultWindowLength = 40; % default frame length for pitch extraction (ms)
+prm.F0defaultWindowLength = 80; % default frame length for pitch extraction (ms)
 prm.F0frameUpdateInterval=1; % shiftm % F0 calculation interval (ms)
 prm.NofChannelsInOctave=24; % nvo=24; % Number of channels in one octave
 prm.IFWindowStretch=1.2; % mu=1.2; % window stretch from isometric window
