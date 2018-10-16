@@ -528,8 +528,9 @@ switch(actionstr)
     nvc=ceil(log(f0ceil/f0floor)/log(2)*nvo);
     [f0v,vrv,dfv,~,aav]=fixpF0VexMltpBG4(xold,fs,f0floor,nvc,nvo,1.2,1,shiftm,1,5,0.5,1);
     title([fname '  ' datestr(now,0)]);
-    drawnow;
+    %drawnow;
     [~,~]=size(f0v);
+    subplot(614);
     [pwt,pwh]=plotcpower(xold,fs,shiftm);drawnow;
     
     [f0raw,irms,~,amp]=f0track5(f0v,vrv,dfv,pwt,pwh,aav,shiftm);
@@ -586,7 +587,7 @@ switch(actionstr)
     %--------------------------------------------------------------
   case 'straightcore'
     disp('% Now, adaptive window analysis has started. Please wait a moment.');
-    [n2sgrambk,nsgram]=straightBodyC03m(xold,fs,shiftm,fftl,f0raw,f0var,f0varL,eta,pc);
+    [n2sgrambk,nsgram]=straightBodyC03ma(xold,fs,shiftm,fftl,f0raw,f0var,f0varL,eta,pc); %%
     if mag>0
       n2sgram=specreshape(fs,n2sgrambk,eta,pc,mag,f0raw);
     else

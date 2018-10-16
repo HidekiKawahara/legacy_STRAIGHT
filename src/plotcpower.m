@@ -1,6 +1,7 @@
 function [pw,pwh]=plotcpower(x,fs,shiftm)
 %	30/April/2005 modification for Matlab v7.0 compatibility
 
+flm=8;  % originally; 01/August/1999 . 
 fl=round(flm*fs/1000);
 w=hanning(2*fl+1);
 w=w/sum(w);
@@ -33,7 +34,7 @@ pwh=pwh((1:nn)+fl);
 pwh=pwh(round(1:shiftm*fs/1000:nn)); 
 pwh(pwh<mpw/10000000)=pwh(pwh<mpw/10000000)+mpw/10000000;% safeguard 15/Jan./2003
 
-subplot(614);
+%subplot(614);
 tt=1:length(pw);
 hhg=plot(tt*shiftm,10*log10(pw),'b');hold on;
 plot(tt*shiftm,10*log10(pwh),'r');grid on;hold off;
