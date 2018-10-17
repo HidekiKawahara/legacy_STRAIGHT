@@ -201,7 +201,7 @@ while (idx < nsyn-fftl) & (ii<length(f0l));
   ii=min(length(f0l),idx/fs*1000/shiftm/sconv+1);
 end;
 
-sy2=sy(fftl/2+(1:(njj*shiftm/1000*fs)*sconv));
+sy2=sy(fftl/2+(1:round((njj*shiftm/1000*fs)*sconv)));
 
 lowcutf=70;
 if lowcutf <70
