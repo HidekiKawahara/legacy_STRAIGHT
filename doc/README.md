@@ -4,7 +4,7 @@ This directory consists of documents prepared for the legacy-STRAIGHT.
 
 Please note that the legacy-STRAIGHT is an ended project. The latest extended morphing framework uses the TANDEM-STRAIGHT. Dr. Masanori Morise, who invented the core component of the TANDEM-STRAIGHT, also distributes an open-source VOCODER framework called WORLD. [Link to mmorise/WORLD](https://github.com/mmorise/World)
 
-## HTML documents (in this directory)
+## HTML and PDF documents (in this directory)
 
 * Getting started with command mode STRAIGHT (May 5, 2007)
 	* file: gettingStartedV40_006b.zip (archived HTML document)
@@ -12,6 +12,8 @@ Please note that the legacy-STRAIGHT is an ended project. The latest extended mo
 * Auditory morphing using STRAIGHT (This framwork is outdated.)(November 7, 2005)
 	* file: morphingWithSTRAIGHT.tar.gz (archived HTML document)
 	* file: morphingWithSTRAIGHTe.pdf (PDF version of the HTML document)
+* STRAIGHT technical report (In Japanese)
+	* file: straightTechRep.pdf (PDF focument)
 
 ## Publications
 
@@ -27,6 +29,6 @@ Please note that the legacy-STRAIGHT is an ended project. The latest extended mo
 * [Hideki Kawahara](http://www.wakayama-u.ac.jp/~kawahara/index_e.html)
 
 ***
-Last update: Tue Jul 17 23:24:35 JST 2018
+Last update: Thu Oct 18 14:12:53 JST 2018
 
 
