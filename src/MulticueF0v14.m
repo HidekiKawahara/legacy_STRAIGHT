@@ -340,14 +340,14 @@ end;
 f0raw0(isnan(f0raw0))=zeros(size(f0raw0(isnan(f0raw0))));
 f0raw0(f0raw0>f0ceil)=f0raw0(f0raw0>f0ceil)*0+f0ceil;
 f0raw0((f0raw0<f0floor)&(f0raw0>0))=f0raw0((f0raw0<f0floor)&(f0raw0>0))*0+f0floor;
-[f0raw2,ecr,ac1]=zrefineF06m(decimate(x,dn),fs/dn,f0raw0,1024,1.1,3,1,1,length(f0raw0));
+[f0raw2,ecr,ac1]=zrefineF06m(decimate(x,dn),fs/dn,f0raw0,1024,1.1,3,shiftm,1,length(f0raw0));
 if imgi==1;
     hold on;
     semilogy(f0raw2,'g');grid on;
 end;
 %----- new V/UV decision routine 15/Aug./2004
 auxouts.BackgroundNoiselevel=noiselevel;
-vuv=zvuvdecision4(f0raw2,auxouts);
+vuv=zvuvdecision4(f0raw2,rels,auxouts,shiftm);
 nnll=min(length(f0raw2),length(vuv));
 f0raw3=f0raw2(1:nnll).*vuv(1:nnll);
 if imgi==1
@@ -535,7 +535,7 @@ damp=damp./abs(pm1);
 
 fxx=f0floor*2.0.^((0:nn-1)/nvo)'*2*pi;
 mmp=0*dslp;
-[c1,c2b]=znrmlcf2(1);
+[c1,c2b]=znrmlcf2(shiftm);
 for ii=1:nn
 	c2=c2b*(fxx(ii)/2/pi)^2;
 	cff=damp(ii,:)/fxx(ii)*2*pi*0;
@@ -1082,13 +1082,13 @@ slp=([pif(2:fftl/2+1,:);pif(fftl/2+1,:)]-pif)/(fs/fftl*2*pi);
 dslp=([dpif(2:fftl/2+1,:);dpif(fftl/2+1,:)]-dpif)/(fs/fftl*2*pi)*fs;
 mmp=slp*0;
 
-[c1,c2]=znrmlcf3(shiftm);
+[c1,c2b]=znrmlcf3(shiftm);
 fxx=((0:fftl/2)+0.5)/fftl*fs*2*pi;
 
 %--- calculation of relative noise level
 
 for ii=1:fftl/2+1;
-	c2=c2*(fxx(ii)/2/pi)^2;
+	c2=c2b*(fxx(ii)/2/pi)^2;
 	mmp(ii,:)=(dslp(ii,:)/sqrt(c2)).^2+(slp(ii,:)/sqrt(c1)).^2;
 end;
 
@@ -1466,6 +1466,7 @@ function [f0,rel,cseg]=zcontiguousSegment10(p,prm)
 
 f0floor=prm.F0searchLowerBound; % f0floor
 f0ceil=prm.F0searchUpperBound; % f0ceil
+shiftm=prm.F0frameUpdateInterval; % shiftm
 
 pwsdb=p.InstantaneousPower;
 f0cand=p.F0candidatesByMix;
@@ -1516,12 +1517,12 @@ segstr = struct;
 for ii=1:length(idx);
     if (maskr(idx(ii),1)>0) && (pwsdb(idx(ii))>wellovernoize)
         [f0seg,relseg,lb,ub,srate,maskr]=zsearchforContiguousSegment(f0cand,relv,maskr,idx(ii),pwsdb,noiselevel);
-        if (~isempty(f0seg)) && (srate>0.12)  && ((ub-lb+1)>13)
+        if (~isempty(f0seg)) && (srate>0.12)  && ((ub-lb+1)>13/shiftm)
             nseg=nseg+1;
             segv(nseg,:)=[lb ub];
             segstr(nseg).f0Segment=f0seg(lb:ub);
             segstr(nseg).reliabilitySegment=relseg(lb:ub);
-            sratev(nseg)=srate*(1-1/max(1.4,sqrt((ub-lb+1)/40))); % reliability with DF normalization
+            sratev(nseg)=srate*(1-1/max(1.4,sqrt((ub-lb+1)*shiftm/40))); % reliability with DF normalization
             if DispOn
                 disp(['Segment (' num2str(lb,7) ':' num2str(ub,7) ') with rel=' num2str(srate)]);
                 semilogy(lb:ub,f0seg(lb:ub));drawnow;
@@ -1574,7 +1575,7 @@ for ii=1:crseg
     if maxjmp>0.4
         disp(['Discontinuity in (' num2str(lb,7) ':' num2str(ub,7) '), Max jump=' num2str(maxjmp,7) ' oct.'])
         f0raw0=f0;
-        dmy=max(relv(lb:ub,:), 2);
+        dmy=max(relv(lb:ub,:), [], 2);
         [~,ixmx]=max(dmy(:));
         cpos=lb+ixmx-1;
         bp=lb;ep=ub;
@@ -1648,8 +1649,8 @@ for ii=1:nrseg
         nexttop=ub; % bug fix, 11/Jan./2005
     end;
     ipause=(lb-lastend+1);fpause=(nexttop-ub+1);
-    if ((ipause<50) || (fpause<50)) && abs(log2(f0bk(lastend))-log2(f0bk(lb)))>0.6 ...
-            && abs(log2(f0bk(ub))-log2(f0bk(nexttop)))>0.6 && (ub-lb+1)<50 && mean(relseg(lb:ub))<0.5
+    if ((ipause<50/shiftm) || (fpause<50/shiftm)) && abs(log2(f0bk(lastend))-log2(f0bk(lb)))>0.6 ...
+            && abs(log2(f0bk(ub))-log2(f0bk(nexttop)))>0.6 && (ub-lb+1)<50/shiftm && mean(rel(lb:ub))<0.5
         %do nothing
     else
         nseg=nseg+1;
@@ -1661,7 +1662,7 @@ end;
 
 %---- check for dominant peaks if it is selected as a voiced segment
 %----- mark syllable centers
-wsml=81;
+wsml=round(81/shiftm);
 pwsdbl=[ones(wsml,1)*pwsdb(1);pwsdb(:);ones(2*wsml,1)*pwsdb(end)];
 pwsdbs=fftfilt(hanning(wsml)/sum(hanning(wsml)),pwsdbl);
 pwsdbs=pwsdbs((1:length(pwsdb))+round(3*wsml/2));
@@ -1694,7 +1695,7 @@ for ii=1:length(pv)
             end;
             disp(['segment (' num2str(bp,7) ':' num2str(ep,7) ') is isolated.']);
             lb=bp;ub=ep;
-            mx=max(relv2(lb:ub,:), 2);
+            mx=max(relv2(lb:ub,:), [], 2);
             [~,imx2]=max(mx(:));
             cpos=lb+imx2-1;
             f0raw1=f0raw0;
@@ -1788,26 +1789,25 @@ srate=srate/(ub-lb+1);
 end
 
 %%%----- V/UV decision
-function vuv=zvuvdecision4(f0,p)
+function vuv=zvuvdecision4(f0,rel,p,shiftm)
 %   Simple V/UV decision logic
 %   Originally designed and coded by Hideki Kawahara
 %   15/Aug./2004
 
 pwsdb=p.InstantaneousPower;
-rel=p.RELofcandidatesByMix;
 maxpwsdb=max(pwsdb);
 noiselevel=p.BackgroundNoiselevel;
 
 %---- onset and offset candidates 
-nw=40;
-nrw=3;
+nw=ceil(40/shiftm);
+nrw=3/shiftm;
 tt=-nw:nw;
 pws=10.0.^(pwsdb/20);
 pws=pws(:);
 wwh=exp(-(tt/(nw/2.5)).^2).*(0.5-1.0./(1+exp(-tt/nrw)));
 dpw=fftfilt(wwh,[pws;zeros(nw*2,1)]);
 dpw=dpw((1:length(pws))+nw);
-biast=nrw*3;
+biast=ceil(nrw*3/shiftm);
 
 ddpw=diff([dpw(1);dpw]);
 ddpwm=diff([dpw;dpw(end)]);
@@ -1815,7 +1815,7 @@ onv=find((ddpw.*ddpwm<0)&(ddpwm<=0));
 
 %---- search for voiced segments
 vuv=(pwsdb>(2*maxpwsdb+noiselevel)/3);
-[pv,~]=zpeakdipdetect(p,81);
+[pv,~]=zpeakdipdetect(p,round(81/shiftm));
 np=length(pv);
 nn=min(length(vuv),length(f0));
 vuv=vuv*0;
@@ -1834,7 +1834,7 @@ for ii=1:np
             end;
         end;
         [dmy,ix]=min(abs(onv-bp));
-        if dmy<20; bp=max(1,onv(ix)-biast);end;
+        if dmy<20/shiftm; bp=max(1,onv(ix)-biast);end;
         for ep=cp+1:ub %min(length(f0)-1,ub) % safe giard 11/Jan./05
             if (pwsdb(ep)<(maxpwsdb+5*noiselevel)/6) || ... %
                ((pwsdb(ep)<(maxpwsdb+1.3*noiselevel)/2.3) && (rel(ep)<0.25)) || ...
